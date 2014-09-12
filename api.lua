@@ -32,7 +32,6 @@ end
 function brewtest.get_juice(stack)
 	local item_name = stack:get_name()
 	if brewtest.juices[item_name] ~= nil then
-	local new_input
 		return {juice = brewtest.juices[item_name], item = stack }
 	end
 	return nil

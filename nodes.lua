@@ -41,7 +41,6 @@ function brewtest.get_press_active_formspec(pos, percent)
 	local press_inputlist = inv:get_list("src")
 	if press_inputlist then
 		press_input = brewtest.get_juice(press_inputlist[1])
---		brewtest.get_recipe("fruitpressing", press_inputlist[1])
 	end
 	local item_percent = 0
 	if press_input then
@@ -241,6 +240,41 @@ minetest.register_node(brewtest.MOD_NAME..":fruit_press_on", {
 	on_destruct = function(pos)
 		brewtest.remove_node_above(pos,{group = "fruitpress", groupvalue = 2})
 	end,
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		if minetest.is_protected(pos, player:get_player_name()) then
+			return 0
+		end
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		if listname == "src" then
+			if brewtest.get_juice(stack) ~= nil then
+				return stack:get_count()
+			else
+				return 0
+			end
+		end
+	end,
+	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+		if minetest.is_protected(pos, player:get_player_name()) then
+			return 0
+		end
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		local stack = inv:get_stack(from_list, from_index)
+		if to_list == "src" then
+			if brewtest.get_juice(stack) ~= nil then
+				return count
+			else
+				return 0
+			end
+		end
+	end,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		if minetest.is_protected(pos, player:get_player_name()) then
+			return 0
+		end
+		return stack:get_count()
+	end,
 })
 
 
@@ -268,17 +302,11 @@ minetest.register_abm({
 		
 		if press_inputlist then
 			press_input = brewtest.get_juice(press_inputlist[1])
-			--brewtest.get_recipe("fruitpressing", press_inputlist[1]) -- minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
 		end
 		
 		if press_input and press_input.item then
 			if meta:get_float("stored_juice") <= 0 and meta:get_string("stored_juice_name") ~= press_input.item:get_name() then
 				meta:set_string("stored_juice_name", press_input.item:get_name())
-			end
-			if meta:get_float("stored_juice") > 0 then
-				if meta:get_string("stored_juice_name") or press_input.item:get_name() ~= meta:get_string("stored_juice_name") then
-				
-				end
 			end
 		end
 		
