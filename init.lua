@@ -28,7 +28,7 @@ minetest.override_item("bucket:bucket_empty", {
 				if meta:get_float("stored_juice") < 10 then
 					return
 				end
-				meta:set_float("stored_juice", meta:get_float("stored_juice") - 10.0)
+				meta:set_float("stored_juice", meta:get_float("stored_juice") - 10)
 				return ItemStack({name = juicedef.bucket})
 			end
 		end
@@ -45,10 +45,10 @@ minetest.override_item("vessels:drinking_glass", {
 		if node.name == brewtest.MOD_NAME..":fruit_press" or node.name == brewtest.MOD_NAME..":fruit_press_on" then
 			local juicedef = brewtest.juices[meta:get_string("stored_juice_name")]
 			if juicedef ~= nil and juicedef.glass ~= nil then
-				if meta:get_float("stored_juice") < 5 then
+				if meta:get_float("stored_juice") < 4 then
 					return
 				end
-				meta:set_float("stored_juice", meta:get_float("stored_juice") - 5.0)
+				meta:set_float("stored_juice", meta:get_float("stored_juice") - 4)
 				return ItemStack({name = juicedef.glass})
 			end
 		end

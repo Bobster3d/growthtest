@@ -17,13 +17,13 @@ brewtest.pipeworks = {
 	}
 }
 
-function brewtest.press_active(pos, percent, item_percent)
+function brewtest.press_active(pos, juice_name, percent, item_percent)
 	local formspec = 
 	"size[8,8.5]"..
 	default.gui_bg..
 	default.gui_bg_img..
 	default.gui_slots..
-	"label[0.1,0;Fruit Press]"..
+	"label[0.1,0;Fruit Press - "..juice_name.."]"..
 	"list[current_name;src;2.75,1.5;1,1;]"..
     "image[3.75,1.5;1,1;gui_furnace_arrow_bg.png^[lowpart:"..
         (item_percent*100)..":gui_furnace_arrow_fg.png^[transformR270]"..
@@ -36,8 +36,9 @@ function brewtest.press_active(pos, percent, item_percent)
     return formspec
 end
 function brewtest.get_press_active_formspec(pos, percent)
-	local meta = minetest.get_meta(pos)local inv = meta:get_inventory()
-	local press_input = nil
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	local press_input
 	local press_inputlist = inv:get_list("src")
 	if press_inputlist then
 		press_input = brewtest.get_juice(press_inputlist[1])
@@ -46,7 +47,11 @@ function brewtest.get_press_active_formspec(pos, percent)
 	if press_input then
 		item_percent = meta:get_float("press_time") / press_input.juice.press_time
 	end
-	return brewtest.press_active(pos, percent, item_percent)
+	local juice_name = "empty"
+	if meta:get_float("stored_juice") > 0 and meta:get_string("stored_juice_name") then
+		juice_name = brewtest.get_juice_name(meta:get_string("stored_juice_name")).name
+	end
+	return brewtest.press_active(pos, juice_name, percent, item_percent)
 end
  
 brewtest.press_inactive_formspec =
@@ -320,10 +325,12 @@ minetest.register_abm({
 			if meta:get_float("press_time") < meta:get_float("press_totaltime") then
 				meta:set_float("press_time", meta:get_float("press_time") + 1)
 				if press_input and meta:get_float("press_time") >= press_input.juice.press_time then
-					meta:set_float("stored_juice", meta:get_float("stored_juice") + 5)
+					meta:set_float("stored_juice", meta:get_float("stored_juice") + 2)
+					if meta:get_float("stored_juice") >= max_juice then
+						meta:set_float("stored_juice",100)
+					end
 					press_input.item:take_item(1)
 					inv:set_stack("src", 1, press_input.item)
-					meta:set_float("press_time", 0)
 				end
 			end
 			local percent = math.floor(meta:get_float("stored_juice") / max_juice * 100)

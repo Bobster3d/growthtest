@@ -36,3 +36,10 @@ function brewtest.get_juice(stack)
 	end
 	return nil
 end
+
+function brewtest.get_juice_name(item_name)
+	if brewtest.juices[item_name] ~= nil then
+		return brewtest.juices[item_name]
+	end
+	return nil
+end
