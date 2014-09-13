@@ -60,3 +60,86 @@ end
 function brewtest.item_drink(amt,replace)
 	return minetest.item_eat(amt,replace)
 end
+
+function brewtest.press_abm_action(pos, node)
+	local meta = minetest.get_meta(pos)
+			for i, name in ipairs({
+			"press_totaltime",
+			"press_time",
+			"stored_juice",
+	}) do
+		if meta:get_string(name) == "" then
+			meta:set_float(name, 0.0)
+		end
+	end
+	
+	local max_juice = 100.0
+	
+	local inv = meta:get_inventory()
+	local press_input = nil
+	local press_inputlist = inv:get_list("src")
+	if press_inputlist then
+		press_input = brewtest.get_juice(press_inputlist[1])
+	end
+	
+	if meta:get_float("stored_juice") > 0 then
+		local percent = math.floor(meta:get_float("stored_juice") / max_juice * 100)
+		meta:set_string("formspec", brewtest.get_press_formspec(pos, percent))
+	else
+		meta:set_string("formspec", brewtest.press_inactive_formspec)
+	end
+	
+	if brewtest.modsupport.mesecons then
+		local has_mesecons_power = minetest.registered_nodes[node.name].has_mesecons_power
+		if not has_mesecons_power then
+			return
+		end
+	end
+	
+	if press_input and press_input.item then
+		if meta:get_float("stored_juice") <= 0 and meta:get_string("stored_juice_name") ~= press_input.item:get_name() then
+			meta:set_string("stored_juice_name", press_input.item:get_name())
+		elseif meta:get_float("stored_juice") > 0 and meta:get_string("stored_juice_name") ~= press_input.item:get_name() then
+			return
+		end
+	end
+	
+	if meta:get_float("stored_juice") >= max_juice then
+		if not brewtest.modsupport.mesecons then
+			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_piston_off")
+		end
+		return
+	end
+	
+	if meta:get_float("press_time") < meta:get_float("press_totaltime") then
+		meta:set_float("press_time", meta:get_float("press_time") + 1)
+		if press_input and meta:get_float("press_time") >= press_input.juice.press_time then
+			meta:set_float("stored_juice", meta:get_float("stored_juice") + 2)
+			if meta:get_float("stored_juice") >= max_juice then
+				meta:set_float("stored_juice", max_juice)
+			end
+			press_input.item:take_item(1)
+			inv:set_stack("src", 1, press_input.item)
+		end
+		if not brewtest.modsupport.mesecons then
+			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press_on", brewtest.MOD_NAME..":fruit_press_piston_on")
+		end
+		return
+	end
+	
+	if not press_input or press_input.juice.press_time <= 0 then
+		if not brewtest.modsupport.mesecons then
+			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_piston_off")
+		end
+	end
+	
+	if inv:is_empty("src") then
+		if not brewtest.modsupport.mesecons then
+			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_piston_off")
+		end
+		return
+	end
+	
+	meta:set_string("press_totaltime", press_input.juice.press_time)
+	meta:set_string("press_time", 0)
+end
