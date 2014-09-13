@@ -1,6 +1,6 @@
 brewtest = {
 	MOD_NAME = "brewtest",
-	version = 0.1,
+	version = 0.2,
 }
 brewtest.modsupport = {
 	pipeworks = minetest.get_modpath("pipeworks"),

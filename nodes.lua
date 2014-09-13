@@ -82,7 +82,7 @@ minetest.register_node(brewtest.MOD_NAME..":fruit_press_piston_off", {
 	diggable = true,
 	selection_box = brewtest.fruit_press_piston.off,
 	node_box = brewtest.fruit_press_piston.off,
-	groups = {fruitpress = 2,choppy=2, oddly_breakable_by_hand=2},
+	groups = {fruitpress = 2},
 })
 
 minetest.register_node(brewtest.MOD_NAME..":fruit_press_piston_on", {
@@ -126,6 +126,20 @@ minetest.register_node(brewtest.MOD_NAME..":fruit_press", {
 	legacy_facedir_simple = true,
 	is_ground_content = false,
 	sounds = default.node_sound_wood_defaults(),
+	mesecons = {
+		effector={
+			action_on = function(pos, node)
+				brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press_on",
+										brewtest.MOD_NAME..":fruit_press_piston_on")
+			end,
+			rules =
+			{{x=1,  y=1, z=0},
+			 {x=-1, y=1, z=0},
+			 {x=0,  y=1, z=1},
+			 {x=0,  y=1, z=-1}}
+		}
+	},
+	has_mesecons_power = false,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", brewtest.press_inactive_formspec)
@@ -216,6 +230,24 @@ minetest.register_node(brewtest.MOD_NAME..":fruit_press_on", {
 	tube = brewtest.pipeworks.fruit_press.tube,
 	groups = {cracky=2, not_in_creative_inventory=1, fruitpress = 1, tubedevice = 1, tubedevice_receiver = 1},
 	sounds = default.node_sound_wood_defaults(),
+	mesecons = {
+		effector={
+			action_off  = function(pos, node)
+				brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
+											brewtest.MOD_NAME..":fruit_press_piston_off")
+			end,
+			rules =
+			{{x=0,  y=0,  z=-1}, --everything apart from y+ (pusher side)
+			 {x=1,  y=0,  z=0},
+			 {x=-1, y=0,  z=0},
+			 {x=0,  y=0,  z=1},
+			 {x=1,  y=1, z=0},
+			 {x=-1, y=1, z=0},
+			 {x=0,  y=1, z=1},
+			 {x=0,  y=1, z=-1}}
+		}
+	},
+	has_mesecons_power = true,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", brewtest.press_inactive_formspec)
@@ -282,7 +314,6 @@ minetest.register_node(brewtest.MOD_NAME..":fruit_press_on", {
 	end,
 })
 
-
 minetest.register_abm({
 	nodenames = {brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_on"},
 	interval = 1.0,
@@ -316,11 +347,20 @@ minetest.register_abm({
 		end
 		
 		if press_input and press_input.item then
-			if meta:get_string("stored_juice_name") ~= press_input.item:get_name() then
+			if meta:get_float("stored_juice") > 0 then
+				if meta:get_string("stored_juice_name") ~= press_input.item:get_name() then
+					return
+				end
+			end
+		end
+		
+		if brewtest.modsupport.mesecons then
+			local has_mesecons_power = minetest.registered_nodes[node.name].has_mesecons_power
+			if not has_mesecons_power then
 				return
 			end
 		end
-
+		
 		if meta:get_float("stored_juice") < max_juice then
 			if meta:get_float("press_time") < meta:get_float("press_totaltime") then
 				meta:set_float("press_time", meta:get_float("press_time") + 1)
@@ -337,15 +377,19 @@ minetest.register_abm({
 			meta:set_string("infotext","Fruit Press: Storage - "..percent.."%")
 			meta:set_string("formspec", brewtest.get_press_active_formspec(pos, percent))
 			if meta:get_float("press_time") < meta:get_float("press_totaltime") then
-				brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press_on",
-										brewtest.MOD_NAME..":fruit_press_piston_on")
+				if not brewtest.modsupport.mesecons then
+					brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press_on",
+											brewtest.MOD_NAME..":fruit_press_piston_on")
+				end
 				return
 			end
 		elseif meta:get_float("stored_juice") >= max_juice then
 			meta:set_string("infotext","Fruit Press: Storage - 100%")
 			meta:set_string("formspec", brewtest.get_press_active_formspec(pos, 100))
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
-							brewtest.MOD_NAME..":fruit_press_piston_off")
+			if not brewtest.modsupport.mesecons then
+				brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
+								brewtest.MOD_NAME..":fruit_press_piston_off")
+			end
 			return
 		end
 
@@ -354,9 +398,10 @@ minetest.register_abm({
 				meta:set_string("infotext","Fruit Press")
 				meta:set_string("formspec", brewtest.press_inactive_formspec)
 			end
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
-							brewtest.MOD_NAME..":fruit_press_piston_off")
-			return
+			if not brewtest.modsupport.mesecons then
+				brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
+								brewtest.MOD_NAME..":fruit_press_piston_off")
+			end
 		end
 		
 		if inv:is_empty("src") then
@@ -364,8 +409,10 @@ minetest.register_abm({
 				meta:set_string("infotext","Fruit Press")
 				meta:set_string("formspec", brewtest.press_inactive_formspec)
 			end
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
-							brewtest.MOD_NAME..":fruit_press_piston_off")
+			if not brewtest.modsupport.mesecons then
+				brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press",
+								brewtest.MOD_NAME..":fruit_press_piston_off")
+			end
 			return
 		end
 		
