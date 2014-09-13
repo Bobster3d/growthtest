@@ -7,7 +7,7 @@ local function swap_node(pos,name)
 	minetest.swap_node(pos,node)
 end
 
-function brewtest.add_node_above(pos, newdata)
+function gtbrewing.add_node_above(pos, newdata)
 	local n = minetest.get_node_or_nil(pos)
 	if not n or not n.param2 then
 		minetest.remove_node(pos)
@@ -25,7 +25,7 @@ function brewtest.add_node_above(pos, newdata)
 	return false
 end
 
-function brewtest.remove_node_above(pos, removedata)
+function gtbrewing.remove_node_above(pos, removedata)
 	local n = minetest.get_node_or_nil(pos)
 	if not n then return end
 	local dir = minetest.facedir_to_dir(n.param2)
@@ -46,7 +46,7 @@ function brewtest.remove_node_above(pos, removedata)
 	end
 end
 
-function brewtest.swap_press_node(pos,pressName,pistonName)
+function gtbrewing.swap_press_node(pos,pressName,pistonName)
 	local pressNode = minetest.get_node_or_nil(pos)
 	local pistonPos = {x=pos.x,y=pos.y+1,z=pos.z}
 	local pistonNode = minetest.get_node(pistonPos)
@@ -57,11 +57,11 @@ function brewtest.swap_press_node(pos,pressName,pistonName)
 	end
 end
 
-function brewtest.item_drink(amt,replace)
+function gtbrewing.item_drink(amt,replace)
 	return minetest.item_eat(amt,replace)
 end
 
-function brewtest.press_abm_action(pos, node)
+function gtbrewing.press_abm_action(pos, node)
 	local meta = minetest.get_meta(pos)
 			for i, name in ipairs({
 			"press_totaltime",
@@ -79,17 +79,17 @@ function brewtest.press_abm_action(pos, node)
 	local press_input = nil
 	local press_inputlist = inv:get_list("src")
 	if press_inputlist then
-		press_input = brewtest.get_juice(press_inputlist[1])
+		press_input = gtbrewing.get_juice(press_inputlist[1])
 	end
 	
 	if meta:get_float("stored_juice") > 0 then
 		local percent = math.floor(meta:get_float("stored_juice") / max_juice * 100)
-		meta:set_string("formspec", brewtest.get_press_formspec(pos, percent))
+		meta:set_string("formspec", gtbrewing.get_press_formspec(pos, percent))
 	else
-		meta:set_string("formspec", brewtest.press_inactive_formspec)
+		meta:set_string("formspec", gtbrewing.press_inactive_formspec)
 	end
 	
-	if brewtest.modsupport.mesecons then
+	if growthtest.modsupport.mesecons then
 		local has_mesecons_power = minetest.registered_nodes[node.name].has_mesecons_power
 		if not has_mesecons_power then
 			return
@@ -105,8 +105,8 @@ function brewtest.press_abm_action(pos, node)
 	end
 	
 	if meta:get_float("stored_juice") >= max_juice then
-		if not brewtest.modsupport.mesecons then
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_piston_off")
+		if not growthtest.modsupport.mesecons then
+			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_piston_off")
 		end
 		return
 	end
@@ -121,21 +121,21 @@ function brewtest.press_abm_action(pos, node)
 			press_input.item:take_item(1)
 			inv:set_stack("src", 1, press_input.item)
 		end
-		if not brewtest.modsupport.mesecons then
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press_on", brewtest.MOD_NAME..":fruit_press_piston_on")
+		if not growthtest.modsupport.mesecons then
+			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press_on", gtbrewing.MOD_NAME..":fruit_press_piston_on")
 		end
 		return
 	end
 	
 	if not press_input or press_input.juice.press_time <= 0 then
-		if not brewtest.modsupport.mesecons then
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_piston_off")
+		if not growthtest.modsupport.mesecons then
+			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_piston_off")
 		end
 	end
 	
 	if inv:is_empty("src") then
-		if not brewtest.modsupport.mesecons then
-			brewtest.swap_press_node(pos, brewtest.MOD_NAME..":fruit_press", brewtest.MOD_NAME..":fruit_press_piston_off")
+		if not growthtest.modsupport.mesecons then
+			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_piston_off")
 		end
 		return
 	end

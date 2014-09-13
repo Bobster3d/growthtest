@@ -1,5 +1,5 @@
-function brewtest.register_juice(juice_data)
-	brewtest.juices[juice_data.src_item] = {
+function gtbrewing.register_juice(juice_data)
+	gtbrewing.juices[juice_data.src_item] = {
 		src_item = juice_data.src_item,
 		press_time = juice_data.press_time or 1,
 		name = juice_data.name,
@@ -14,7 +14,7 @@ function brewtest.register_juice(juice_data)
 			description = "Glass of "..juice_data.name,
 			inventory_image = juice_data.glass_img,
 			stack_max = 1,
-			on_use = brewtest.item_drink(juice_data.drink_hp,"vessels:drinking_glass")
+			on_use = gtbrewing.item_drink(juice_data.drink_hp,"vessels:drinking_glass")
 		})
 	end
 	if juice_data.bucket ~= nil then
@@ -29,17 +29,17 @@ function brewtest.register_juice(juice_data)
 	end
 end
 
-function brewtest.get_juice(stack)
+function gtbrewing.get_juice(stack)
 	local item_name = stack:get_name()
-	if brewtest.juices[item_name] ~= nil then
-		return {juice = brewtest.juices[item_name], item = stack }
+	if gtbrewing.juices[item_name] ~= nil then
+		return {juice = gtbrewing.juices[item_name], item = stack }
 	end
 	return nil
 end
 
-function brewtest.get_juice_name(item_name)
-	if brewtest.juices[item_name] ~= nil then
-		return brewtest.juices[item_name]
+function gtbrewing.get_juice_name(item_name)
+	if gtbrewing.juices[item_name] ~= nil then
+		return gtbrewing.juices[item_name]
 	end
 	return nil
 end

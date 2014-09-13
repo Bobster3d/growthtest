@@ -1,4 +1,4 @@
-brewtest.fruit_press = {
+gtbrewing.fruit_press = {
 	off = {
 		type = "fixed",
 		fixed = {
@@ -50,7 +50,7 @@ brewtest.fruit_press = {
 	}
 }
 
-brewtest.fruit_press_piston = {
+gtbrewing.fruit_press_piston = {
 	off = {
 		type = "fixed",
 		fixed = {
