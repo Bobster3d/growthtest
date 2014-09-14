@@ -56,16 +56,20 @@ minetest.register_node("gtvines:vine", {
     end,
 })
 
+function gtvines.grow(pos, node)
+	local dir = growthtest.wallmounted_to_dir(node.param2)
+	local posbelow = {x=pos.x, y=pos.y-1, z=pos.z}
+	local nodebelow = minetest.get_node(posbelow)
+	if nodebelow.name == "air" then
+		minetest.add_node(posbelow, {name=node.name, param2 = node.param2})
+	end
+end
+
 minetest.register_abm({
 	nodenames = {"gtvines:vine"},
-	interval = 120,
-	chance = 3,
+	interval = 180,
+	chance = 2,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local dir = growthtest.wallmounted_to_dir(node.param2)
-		local posbelow = {x=pos.x, y=pos.y-1, z=pos.z}
-		local nodebelow = minetest.get_node(posbelow)
-		if nodebelow.name == "air" then
-			minetest.add_node(posbelow, {name=node.name, param2 = node.param2})
-		end
+		gtvines.grow(pos, node)
 	end
 })
