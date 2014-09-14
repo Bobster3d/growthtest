@@ -58,8 +58,8 @@ minetest.register_node("gtvines:vine", {
 
 minetest.register_abm({
 	nodenames = {"gtvines:vine"},
-	interval = 5,
-	chance = 1,
+	interval = 120,
+	chance = 3,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local dir = growthtest.wallmounted_to_dir(node.param2)
 		local posbelow = {x=pos.x, y=pos.y-1, z=pos.z}
