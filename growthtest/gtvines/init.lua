@@ -27,6 +27,18 @@ function gtvines.overwrite_vine_drop(drop)
 	end
 end
 
+
+function gtvines.grow(pos, node)
+	local dir = growthtest.wallmounted_to_dir(node.param2)
+	local posbelow = {x=pos.x, y=pos.y-1, z=pos.z}
+	local nodebelow = minetest.get_node(posbelow)
+	if nodebelow.name == "air" then
+		minetest.set_node(posbelow, {name=node.name, param2 = node.param2})
+		return true
+	end
+	return false
+end
+
 minetest.register_node("gtvines:vine", {
 	description = "Vine",
 	drawtype = "signlike",
@@ -56,17 +68,6 @@ minetest.register_node("gtvines:vine", {
     end,
 })
 
-function gtvines.grow(pos, node)
-	local dir = growthtest.wallmounted_to_dir(node.param2)
-	local posbelow = {x=pos.x, y=pos.y-1, z=pos.z}
-	local nodebelow = minetest.get_node(posbelow)
-	if nodebelow.name == "air" then
-		minetest.add_node(posbelow, {name=node.name, param2 = node.param2})
-		return true
-	end
-	return false
-end
-
 minetest.register_abm({
 	nodenames = {"gtvines:vine"},
 	interval = 180,
@@ -75,3 +76,6 @@ minetest.register_abm({
 		return gtvines.grow(pos, node)
 	end
 })
+
+minetest.register_alias("vines:side", "gtvines:vine")
+minetest.register_alias("vines:vine", "gtvines:vine")
