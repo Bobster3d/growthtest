@@ -1,6 +1,6 @@
 Growthtest
 ==========
-Mod original influenced by [Growthcraft](http://growthcraft.wikispaces.com) for minecraft 
+Mod originaly influenced by [Growthcraft](http://growthcraft.wikispaces.com) for minecraft 
 
 work in progress
 
