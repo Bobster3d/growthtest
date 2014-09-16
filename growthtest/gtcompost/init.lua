@@ -92,3 +92,10 @@ crops = {
 	"farming_plus:tomato",
 },
 })
+
+gtcompost.register_compostable({
+crops = { 
+	"gtberries:bush_blueberry_empty",
+	"gtberries:bush_blueberry",
+},
+})

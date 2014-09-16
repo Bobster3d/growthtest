@@ -45,10 +45,6 @@ function gtcompost.forcegrow(itemstack,pointed_thing)
 			return
 		end
 	elseif crops ~= nil then
-		if math.random(1,5) > 3 then
-			itemstack:take_item()
-			return itemstack
-		end
 		local stage = 0
 		for i,name in ipairs(crops) do
 			if name == node.name then
@@ -58,6 +54,10 @@ function gtcompost.forcegrow(itemstack,pointed_thing)
 		end
 		if stage >= #crops then
 			return
+		end
+		if math.random(1,5) > 3 then
+			itemstack:take_item()
+			return itemstack
 		end
 		minetest.set_node(pos, {name = crops[stage + 1]})
 	elseif node.name == "gtvines:vine" then
