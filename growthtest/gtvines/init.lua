@@ -39,6 +39,44 @@ function gtvines.grow(pos, node)
 	return false
 end
 
+function gtvines.get_air_around(pos)
+	local left = {x=pos.x-1, y=pos.y, z=pos.z}
+	local left_node = minetest.get_node_or_nil(left)
+	local right = {x=pos.x+1, y=pos.y, z=pos.z}
+	local right_node = minetest.get_node_or_nil(right)
+	local front = {x=pos.x, y=pos.y, z=pos.z+1}
+	local front_node = minetest.get_node_or_nil(front)
+	local back = {x=pos.x, y=pos.y, z=pos.z-1}
+	local back_node = minetest.get_node_or_nil(back)
+	if left_node.name == "air" then
+		return {pos = left, dir = minetest.dir_to_wallmounted({x=1,y=0,z=0})}
+	elseif right_node.name == "air" then
+		return {pos = right, dir = minetest.dir_to_wallmounted({x=-1,y=0,z=0})}
+	elseif front_node.name == "air" then
+		return {pos = front, dir = minetest.dir_to_wallmounted({x=0,y=0,z=-1})}
+	elseif back_node.name == "air" then
+		return {pos = back, dir = minetest.dir_to_wallmounted({x=0,y=0,z=1})}
+	else
+		return nil
+	end
+end
+
+function gtvines.generate_vines(pos)
+	local height = math.random(5,10)
+	local air_node = gtvines.get_air_around(pos)
+	if air_node ~= nil then
+		local face_dir = air_node.dir
+		minetest.set_node(air_node.pos, {name="gtvines:vine", param2 = face_dir})
+		for i = 1, height do
+			local posbelow = {x=air_node.pos.x, y=air_node.pos.y-i, z=air_node.pos.z}
+			local nodebelow = minetest.get_node(posbelow)
+			if nodebelow.name == "air" then
+				minetest.set_node(posbelow, {name="gtvines:vine", param2 = face_dir})
+			end
+		end
+	end
+end
+
 minetest.register_node("gtvines:vine", {
 	description = "Vine",
 	drawtype = "signlike",
@@ -60,6 +98,7 @@ minetest.register_node("gtvines:vine", {
 	after_place_node = function(pos, placer)
 		local n = minetest.get_node_or_nil(pos)
 		local dir = n.param2
+		print(dir)
 		if dir == 0 or dir == 1 then
 			minetest.remove_node(pos)
 			return true
@@ -76,6 +115,37 @@ minetest.register_abm({
 		return gtvines.grow(pos, node)
 	end
 })
+
+plantslib:spawn_on_surfaces({
+	avoid_nodes = {"gtvines:vine"},
+	avoid_radius = 3,
+	spawn_delay = 90,
+	spawn_plants = {"vines:vine"},
+	spawn_chance = 10,
+	spawn_surfaces = {"group:leafdecay"},
+	spawn_on_side = true,
+	near_nodes = {"default:jungletree"},
+	near_nodes_size = 10,
+	near_nodes_vertical = 5,
+	near_nodes_count = 1,
+	plantlife_limit = -0.9,
+})
+
+plantslib:register_generate_plant({
+	surface = {"default:jungleleaves","default:leaves"},
+	max_count = 20,
+	rarity = 20,
+	avoid_nodes = {"gtvines:vine"},
+	avoid_radius = 3,
+	near_nodes = {"default:jungletree"},
+	near_nodes_size = 10,
+	near_nodes_vertical = 5,
+	near_nodes_count = 1,
+	plantlife_limit = -0.9,
+	},
+	gtvines.generate_vines
+)
+
 
 minetest.register_alias("vines:side", "gtvines:vine")
 minetest.register_alias("vines:vine", "gtvines:vine")

@@ -8,7 +8,7 @@ function gtberries.register_bush(bush_name,bush_data, berry_name, berry_data)
 		paramtype = "light",
 		sunlight_propagates = true,
 		walkable = false,
-		groups = {snappy=3,flammable=2,attached_node=1},
+		groups = {snappy=3,flammable=2,attached_node=1,bush=1},
 		sounds = default.node_sound_leaves_defaults(), 
 		after_place_node = function(pos, placer)
 			if berry_name ~= nil and berry_name ~= "" then
@@ -29,6 +29,7 @@ function gtberries.register_bush(bush_name,bush_data, berry_name, berry_data)
 	})
 	if berry_name ~= nil and berry_name ~= "" then
 		if berry_data ~= nil then
+			table.insert(gtberries.berry_bushes, bush_name)
 			minetest.register_craftitem(berry_name, {
 				description = berry_data.description or "UNDEFINED BERRY",
 				inventory_image = berry_data.inventory_image,
@@ -44,7 +45,7 @@ function gtberries.register_bush(bush_name,bush_data, berry_name, berry_data)
 				sunlight_propagates = true,
 				walkable = false,
 				drop = bush_name,
-				groups = {snappy=3,flammable=2,attached_node=1,not_in_creative_inventory=1},
+				groups = {snappy=3,flammable=2,attached_node=1,bush=1,not_in_creative_inventory=1},
 				sounds = default.node_sound_leaves_defaults(), 
 				after_place_node = function(pos, placer)
 					return gtberries.place_bush(pos)

@@ -1,8 +1,14 @@
-growthtest
+Growthtest
 ==========
-
 work in progress
 
-lots of stuff that should generate in the world does not currently generate
+craftable stuff uncraftable currently
 
-craftable stuff uncraftable currently etc etc
+Plants_lib
+==========
+This mod is using Plants_lib for bush/vine generation
+
+Library made and maintained by VanessaE
+https://github.com/VanessaE/plantlife_modpack
+
+the library is included with Growthtest

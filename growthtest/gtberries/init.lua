@@ -1,5 +1,7 @@
 gtberries = { }
 
+gtberries.berry_bushes = { }
+
 local bush_model = {
 	type = "fixed",
 	fixed = {
@@ -31,3 +33,35 @@ gtberries.register_bush(
 	description = "Blueberry",
 	inventory_image = "gtberries_blueberry.png",
 })
+
+plantslib:register_generate_plant({
+	surface = {
+		"default:dirt_with_grass",
+	},
+	avoid_radius = 5,
+	avoid_nodes = {"group:bush"},
+	max_count = 15, --10,15
+	rarity = 30, --3,4
+	min_elevation = 1, -- above sea level
+	plantlife_limit = -0.9,
+	temp_min = 0.4, -- approx 2-3C
+	temp_max = -0.15, -- approx 35C
+	},
+	"gtberries:bush"
+)	
+
+plantslib:register_generate_plant({
+	surface = {
+		"default:dirt_with_grass",
+	},
+	avoid_radius = 8,
+	avoid_nodes = {"group:bush"},
+	max_count = 8, --10,15
+	rarity = 70, --3,4
+	min_elevation = 1, -- above sea level
+	plantlife_limit = -0.9,
+	temp_min = 0.4, -- approx 2-3C
+	temp_max = -0.15, -- approx 35C
+	},
+	gtberries.berry_bushes
+)	
