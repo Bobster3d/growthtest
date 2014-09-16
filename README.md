@@ -1,5 +1,7 @@
 Growthtest
 ==========
+Mod original influenced by [Growthcraft](http://growthcraft.wikispaces.com) for minecraft 
+
 work in progress
 
 craftable stuff uncraftable currently
