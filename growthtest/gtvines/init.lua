@@ -62,7 +62,9 @@ function gtvines.grow(pos, node)
 	local nodebelow = minetest.get_node(posbelow)
 	if nodebelow.name == "air" then
 		minetest.add_node(posbelow, {name=node.name, param2 = node.param2})
+		return true
 	end
+	return false
 end
 
 minetest.register_abm({
@@ -70,6 +72,6 @@ minetest.register_abm({
 	interval = 180,
 	chance = 2,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		gtvines.grow(pos, node)
+		return gtvines.grow(pos, node)
 	end
 })

@@ -2,6 +2,7 @@ growthtest = {
 	MOD_NAME = "growthtest",
 }
 growthtest.modsupport = {
+	farming_plus = minetest.get_modpath("farming_plus"),
 	pipeworks = minetest.get_modpath("pipeworks"),
 	mesecons = minetest.get_modpath("mesecons"),
 }
