@@ -133,10 +133,10 @@ plantslib:spawn_on_surfaces({
 
 plantslib:register_generate_plant({
 	surface = {"default:jungleleaves","default:leaves"},
-	max_count = 20,
-	rarity = 20,
+	max_count = 40,
+	rarity = 15,
 	avoid_nodes = {"gtvines:vine"},
-	avoid_radius = 3,
+	avoid_radius = 2,
 	near_nodes = {"default:jungletree"},
 	near_nodes_size = 10,
 	near_nodes_vertical = 5,
