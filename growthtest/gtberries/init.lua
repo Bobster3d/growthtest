@@ -11,8 +11,6 @@ local bush_model = {
 
 dofile(minetest.get_modpath("gtberries").."/api.lua")
 
----- GET PLANT LIB FOR GEN OR SOMETHING
-
 gtberries.register_bush("gtberries:bush",{
 	description = "Bush",
 	tiles = {
@@ -28,10 +26,16 @@ gtberries.register_bush(
 		"gtberries_bush.png^gtberries_blueberry_overlay.png",
 	},
 	node_box = bush_model,
+	min_light_level = 8, --minimum light level to grow
 },
 "gtberries:blueberry",{
 	description = "Blueberry",
 	inventory_image = "gtberries_blueberry.png",
+	health = 2,
+	drop_amount = {
+		min = 1,
+		max = 3,
+	},
 })
 
 plantslib:register_generate_plant({

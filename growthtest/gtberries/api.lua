@@ -22,7 +22,8 @@ function gtberries.register_bush(bush_name,bush_data, berry_name, berry_data)
 		on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 			if berry_name ~= nil and berry_name ~= "" then
 				if berry_data ~= nil then
-					gtberries.pick_berry(pos, berry_name, bush_name.."_empty")
+					gtberries.pick_berry(pos, berry_name, bush_name.."_empty",
+					berry_data.drop_amount or {min = 1, max = 1})
 				end
 			end
 		end,
@@ -54,8 +55,14 @@ function gtberries.register_bush(bush_name,bush_data, berry_name, berry_data)
 			minetest.register_abm({
 				nodenames = {bush_name.."_empty"},
 				interval = 120,
-				chance = 2,
+				chance = 3,
 				action = function(pos, node)
+					if not minetest.get_node_light(pos) then
+						return
+					end
+					if minetest.get_node_light(pos) < bush_data.min_light_level then
+						return
+					end
 					gtberries.set_bush(pos, bush_name)
 				end,
 			})
@@ -82,7 +89,7 @@ function gtberries.set_bush(pos, replace_with)
 	minetest.set_node(pos, {name = replace_with})
 end
 
-function gtberries.pick_berry(pos,berry_name,replace_with)
+function gtberries.pick_berry(pos,berry_name,replace_with,drop_amount)
 	gtberries.set_bush(pos, replace_with)
-	minetest.add_item({x=pos.x+math.random(-1,1), y=pos.y+1, z=pos.z+math.random(-1,1)}, berry_name)
+	minetest.add_item({x=pos.x, y=pos.y+1, z=pos.z}, berry_name.." "..math.random(drop_amount.min,drop_amount.max))
 end
