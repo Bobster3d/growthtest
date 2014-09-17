@@ -1,10 +1,12 @@
-Growthtest
+Growthtest - work in progress
 ==========
-Mod originally influenced by [Growthcraft](http://growthcraft.wikispaces.com) for minecraft 
 
-work in progress
+This Mod was originally influenced by [Growthcraft](http://growthcraft.wikispaces.com) 
+The original intention was to just make brewing.
 
-craftable stuff uncraftable currently
+Now it is turning into a form of series of mods attempting to enhance agriculture / growth. each mod has some form of api (some of these apis may change heavily)
+
+[Wiki](https://github.com/Bobster3d/growthtest/wiki)
 
 Plants_lib
 ==========

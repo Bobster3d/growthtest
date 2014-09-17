@@ -67,7 +67,7 @@ gtbrewing.press_inactive_formspec =
 	"list[current_player;main;0,5.5;8,3;8]"..
 	default.get_hotbar_bg(0,4.25)
 
-minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_piston_off", {
+minetest.register_node("gtbrewing:fruit_press_piston_off", {
 	drawtype = "nodebox",
 	tiles = {
 		"brewtest_fruitpress_top.png",
@@ -79,13 +79,13 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_piston_off", {
 		},
 	paramtype = "light",
 	paramtype2 = "facedir",
-	diggable = true,
+	diggable = false,
 	selection_box = gtbrewing.fruit_press_piston.off,
 	node_box = gtbrewing.fruit_press_piston.off,
-	groups = {fruitpress = 2},
+	groups = {fruitpress = 2,not_in_creative_inventory=1},
 })
 
-minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_piston_on", {
+minetest.register_node("gtbrewing:fruit_press_piston_on", {
 	drawtype = "nodebox",
 	tiles = {
 		"brewtest_fruitpress_top.png",
@@ -100,10 +100,10 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_piston_on", {
 	diggable = false,
 	selection_box = gtbrewing.fruit_press_piston.on,
 	node_box = gtbrewing.fruit_press_piston.on,
-	groups = {fruitpress = 2},
+	groups = {fruitpress = 2,not_in_creative_inventory=1},
 })
 
-minetest.register_node(gtbrewing.MOD_NAME..":fruit_press", {
+minetest.register_node("gtbrewing:fruit_press", {
 	description = "Fruit Press",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -129,8 +129,8 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press", {
 	mesecons = {
 		effector={
 			action_on = function(pos, node)
-				gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press_on",
-										gtbrewing.MOD_NAME..":fruit_press_piston_on")
+				gtbrewing.swap_press_node(pos, "gtbrewing:fruit_press_on",
+										"gtbrewing:fruit_press_piston_on")
 			end,
 			rules =
 			{{x=1,  y=1, z=0},
@@ -151,7 +151,7 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press", {
 		if growthtest.modsupport.pipeworks then
 			pipeworks.scan_for_tube_objects( pos );
 		end
-		return gtbrewing.add_node_above(pos, {name = gtbrewing.MOD_NAME..":fruit_press_piston_off"})
+		return gtbrewing.add_node_above(pos, {name = "gtbrewing:fruit_press_piston_off"})
     end,
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
@@ -206,9 +206,9 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press", {
 	end,
 })
 
-minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_on", {
+minetest.register_node("gtbrewing:fruit_press_on", {
 	description = "Fruit Press",
-	drop = gtbrewing.MOD_NAME..":fruit_press",
+	drop = "gtbrewing:fruit_press",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
@@ -233,8 +233,8 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_on", {
 	mesecons = {
 		effector={
 			action_off  = function(pos, node)
-				gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press",
-											gtbrewing.MOD_NAME..":fruit_press_piston_off")
+				gtbrewing.swap_press_node(pos, "gtbrewing:fruit_press",
+											"gtbrewing:fruit_press_piston_off")
 			end,
 			rules =
 			{{x=0,  y=0,  z=-1}, --everything apart from y+ (pusher side)
@@ -259,7 +259,7 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_on", {
 		if growthtest.modsupport.pipeworks then
 			pipeworks.scan_for_tube_objects( pos );
 		end
-		return gtbrewing.add_node_above(pos, {name = gtbrewing.MOD_NAME..":fruit_press_piston_off"})
+		return gtbrewing.add_node_above(pos, {name = "gtbrewing:fruit_press_piston_off"})
     end,
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
@@ -315,7 +315,7 @@ minetest.register_node(gtbrewing.MOD_NAME..":fruit_press_on", {
 })
 
 minetest.register_abm({
-	nodenames = {gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_on"},
+	nodenames = {"gtbrewing:fruit_press", "gtbrewing:fruit_press_on"},
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)

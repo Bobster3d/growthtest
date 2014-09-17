@@ -106,7 +106,7 @@ function gtbrewing.press_abm_action(pos, node)
 	
 	if meta:get_float("stored_juice") >= max_juice then
 		if not growthtest.modsupport.mesecons then
-			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_piston_off")
+			gtbrewing.swap_press_node(pos, "gtbrewing:fruit_press", "gtbrewing:fruit_press_piston_off")
 		end
 		return
 	end
@@ -122,20 +122,20 @@ function gtbrewing.press_abm_action(pos, node)
 			inv:set_stack("src", 1, press_input.item)
 		end
 		if not growthtest.modsupport.mesecons then
-			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press_on", gtbrewing.MOD_NAME..":fruit_press_piston_on")
+			gtbrewing.swap_press_node(pos, "gtbrewing:fruit_press_on", "gtbrewing:fruit_press_piston_on")
 		end
 		return
 	end
 	
 	if not press_input or press_input.juice.press_time <= 0 then
 		if not growthtest.modsupport.mesecons then
-			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_piston_off")
+			gtbrewing.swap_press_node(pos, "gtbrewing:fruit_press", "gtbrewing:fruit_press_piston_off")
 		end
 	end
 	
 	if inv:is_empty("src") then
 		if not growthtest.modsupport.mesecons then
-			gtbrewing.swap_press_node(pos, gtbrewing.MOD_NAME..":fruit_press", gtbrewing.MOD_NAME..":fruit_press_piston_off")
+			gtbrewing.swap_press_node(pos, "gtbrewing:fruit_press", "gtbrewing:fruit_press_piston_off")
 		end
 		return
 	end
